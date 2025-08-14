@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEET Syllabus Tracker</title>
+<style>
+:root{
+  --bg:#f6f7fb;--card:#ffffff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb;
+  --blue:#3b82f6;--orange:#f59e0b;--green:#10b981;--purple:#a855f7;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text);}
+header{padding:24px 16px;text-align:center;}
+h1{margin:0;font-size:28px;}
+.container{max-width:1100px;margin:0 auto;padding:0 16px 48px;}
+.grid{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.card h2{margin:0;padding:16px 20px;border-bottom:1px solid var(--border);}
+.card .content{padding:16px;}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.search{flex:1;display:flex;gap:8px;}
+.search input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:10px;}
+.btn{padding:10px 12px;border:1px solid var(--border);background:var(--card);border-radius:10px;cursor:pointer;}
+.btn:hover{background:#fafafa;}
+.topic-row{display:grid;grid-template-columns:1.2fr repeat(5,90px) 140px;gap:8px;align-items:center;padding:10px;border-bottom:1px dashed var(--border);}
+.topic-title{font-size:14px;}
+.topic-controls{display:flex;gap:6px;align-items:center;justify-content:center;}
+.rev-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;}
+.mcq{justify-content:flex-start;}
+.section-title{font-weight:600;margin:18px 0 8px;color:var(--muted);}
+.progress{height:12px;background:#edf2f7;border-radius:999px;overflow:hidden;border:1px solid var(--border);}
+.bar{height:100%;width:0%;}
+.bar.physics{background:var(--blue);}
+.bar.chemistry{background:var(--orange);}
+.bar.biology{background:var(--green);}
+.bar.overall{background:var(--purple);}
+.progress-row{display:grid;grid-template-columns:140px 1fr 70px;gap:12px;align-items:center;margin:10px 0;}
+.muted{color:var(--muted);font-size:13px;}
+footer{padding:24px 16px;text-align:center;color:var(--muted);}
+</style>
+</head>
+<body>
+<header>
+  <h1>NEET Syllabus Tracker</h1>
+  <p class="muted">Track 5 revisions, 300 MCQs practice, and lecture tick for each chapter. Progress auto-saves in your browser.</p>
+</header>
+<div class="container">
+  <div class="card">
+    <h2>Progress</h2>
+    <div class="content" id="progressPanel">
+      <div class="progress-row">
+        <div class="muted">Physics</div>
+        <div class="progress"><div class="bar physics" id="bar-physics"></div></div>
+        <div class="muted" id="pct-physics">0%</div>
+      </div>
+      <div class="progress-row">
+        <div class="muted">Chemistry</div>
+        <div class="progress"><div class="bar chemistry" id="bar-chemistry"></div></div>
+        <div class="muted" id="pct-chemistry">0%</div>
+      </div>
+      <div class="progress-row">
+        <div class="muted">Biology</div>
+        <div class="progress"><div class="bar biology" id="bar-biology"></div></div>
+        <div class="muted" id="pct-biology">0%</div>
+      </div>
+      <div class="progress-row">
+        <div class="muted">Overall</div>
+        <div class="progress"><div class="bar overall" id="bar-overall"></div></div>
+        <div class="muted" id="pct-overall">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card" id="physicsCard">
+      <h2>Physics</h2>
+      <div class="content" id="physicsAll"></div>
+    </div>
+
+    <div class="card" id="chemistryCard">
+      <h2>Chemistry</h2>
+      <div class="content" id="chemistryAll"></div>
+    </div>
+
+    <div class="card" id="biologyCard">
+      <h2>Biology</h2>
+      <div class="content" id="biologyAll"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="content toolbar">
+      <div class="search">
+        <input id="search" placeholder="Search chapter… (e.g., Optics, Biomolecules)">
+        <button class="btn" id="clearStorage">Reset Progress</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+Made for you • Progress auto-saves in your browser
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+const syllabus = {
+  physics:[
+"Chapter 1. Units and measurements",
+"Chapter 2. Motion in a straight line",
+"Chapter 3. Motion in a Plane",
+"Chapter 4. Laws of Motion",
+"Chapter 5. Work, energy and power",
+"Chapter 6. Centre of mass",
+"Chapter 7. Rotational Mechanics",
+"Chapter 8. Gravitation",
+"Chapter 9. Mechanical Properties of Solids (Properties of Matter)",
+"Chapter 10. Mechanical Properties of Fluids (Fluid Mechanics)",
+"Chapter 11. Thermal Properties of Matter",
+"Chapter 12. Thermodynamics",
+"Chapter 13. Kinetic Theory of Gases",
+"Chapter 14. Oscillations",
+"Chapter 15. Waves",
+"Chapter 16. Electric charges and Fields",
+"Chapter 17. Electrostatic potential and capacitance",
+"Chapter 18. Current Electricity",
+"Chapter 19. Moving charges and Magnetism (Magnetic Effect of current)",
+"Chapter 20. Magnetism and Matter",
+"Chapter 21. Electromagnetic Induction",
+"Chapter 22. Electromagnetic waves",
+"Chapter 23. Alternating Current",
+"Chapter 24. Ray Optics",
+"Chapter 25. Waves Optics",
+"Chapter 26. Dual Nature",
+"Chapter 27. Atoms",
+"Chapter 28. Nuclei",
+"Chapter 29. Semiconductors"
+  ],
+  chemistry:[
+"Chapter 1. Mole Concept",
+"Chapter 2. Structure of Atoms (Atomic Structure)",
+"Chapter 3. Chemical Bonding",
+"Chapter 4. Thermodynamics",
+"Chapter 5. Solutions",
+"Chapter 6. Equilibrium",
+"Chapter 7. Redox Reactions",
+"Chapter 8. Electrochemistry",
+"Chapter 9. Chemical Kinetics",
+"Chapter 10. Periodic Table",
+"Chapter 11. P block (13 & 14)",
+"Chapter 12. P block (15-18)",
+"Chapter 13. D&F Block",
+"Chapter 14. Coordination Compounds",
+"Chapter 15. IUPAC+ISOM",
+"Chapter 16. GOC",
+"Chapter 17. Hydrocarbons",
+"Chapter 18. Haloalkanes and Haloarenes",
+"Chapter 19. Alcohols, Phenols and Ethers",
+"Chapter 20. Aldehyde, Ketones and Carboxylic acids",
+"Chapter 21. Amines",
+"Chapter 22. Biomolecules"
+  ],
+  biology:[
+"The Living World","Biological Classification","Plant Kingdom","Animal Kingdom","Morphology of Flowering Plants",
+"Anatomy of Flowering Plants","Structural Organisation in Animals","Cell: The Unit of Life","Biomolecules",
+"Cell Cycle and Cell Division","Transport in Plants","Photosynthesis in Higher Plants",
+"Respiration in Plants","Plant Growth and Development","Breathing and Exchange of Gases",
+"Body Fluids and Circulation","Excretory Products and Their Elimination","Locomotion and Movement",
+"Neural Control and Coordination","Chemical Coordination and Integration","Reproduction in Organisms",
+"Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health",
+"Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution",
+"Human Health and Disease","Enhancement in Food Production","Microbes in Human Welfare",
+"Biotechnology - Principles and Processes","Biotechnology and Its Applications","Organisms and Populations",
+"Ecosystem","Biodiversity and Conservation"
+  ]
+};
+
+const storageKey='neetTrackerV1';
+
+function makeId(title){return title.toLowerCase().replace(/[^a-z0-9]+/g,'-');}
+function loadState(){try{return JSON.parse(localStorage.getItem(storageKey))||{}}catch{return{}}}
+function saveState(state){localStorage.setItem(storageKey,JSON.stringify(state));}
+
+function chapterRow(title){
+  const id=makeId(title);
+  const row=document.createElement('div');
+  row.className='topic-row';
+  row.dataset.id=id;
+  const titleEl=document.createElement('div');
+  titleEl.className='topic-title';
+  titleEl.textContent=title;
+  row.appendChild(titleEl);
+  for(let i=1;i<=5;i++){
+    const wrap=document.createElement('label');
+    wrap.className='rev-pill topic-controls';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.dataset.kind='rev'; cb.dataset.round=i; cb.id=id+'-rev'+i;
+    const span=document.createElement('span'); span.textContent='Rev '+i;
+    wrap.appendChild(cb); wrap.appendChild(span); row.appendChild(wrap);
+  }
+  const mcqWrap=document.createElement('label');
+  mcqWrap.className='rev-pill topic-controls mcq';
+  const mcq=document.createElement('input'); mcq.type='checkbox'; mcq.dataset.kind='mcq'; mcq.id=id+'-mcq';
+  const mcqText=document.createElement('span'); mcqText.textContent='300 MCQs';
+  mcqWrap.appendChild(mcq); mcqWrap.appendChild(mcqText); row.appendChild(mcqWrap);
+  const lecWrap=document.createElement('label');
+  lecWrap.className='rev-pill topic-controls mcq';
+  const lec=document.createElement('input'); lec.type='checkbox'; lec.dataset.kind='lecture'; lec.id=id+'-lecture';
+  const lecText=document.createElement('span'); lecText.textContent='Lecture';
+  lecWrap.appendChild(lec); lecWrap.appendChild(lecText); row.appendChild(lecWrap);
+  return row;
+}
+
+function renderList(subject,mountId){
+  const mount=document.getElementById(mountId);
+  mount.innerHTML='';
+  syllabus[subject].forEach(title=>{mount.appendChild(chapterRow(title));});
+}
+
+function updateProgress(){
+  ['physics','chemistry','biology'].forEach(sub=>{
+    const boxes=document.querySelectorAll('#'+sub+'Card .topic-row input[type="checkbox"]');
+    const total=boxes.length;
+    const checked=Array.from(boxes).filter(b=>b.checked).length;
+    const pct=total?Math.round((checked/total)*100):0;
+    document.getElementById('bar-'+sub).style.width=pct+'%';
+    document.getElementById('pct-'+sub).textContent=pct+'%';
+  });
+}
+
+function bindEvents(){
+  document.querySelectorAll('.topic-row input[type="checkbox"]').forEach(cb=>{
+    const id=cb.id;
+    const state=loadState();
+    if(state[id]) cb.checked=true;
+    cb.addEventListener('change',()=>{
+      const s=loadState();
+      if(cb.checked)s[id]=true; else delete s[id];
+      saveState(s);
+      updateProgress();
+    });
+  });
+}
+
+document.getElementById('search').addEventListener('input',function(e){
+  const q=e.target.value.toLowerCase();
+  document.querySelectorAll('.topic-row').forEach(row=>{
+    row.style.display=row.querySelector('.topic-title').textContent.toLowerCase().includes(q)?'grid':'none';
+  });
+});
+
+document.getElementById('clearStorage').addEventListener('click',function(){
+  if(confirm('Reset all saved progress?')){
+    localStorage.removeItem(storageKey);
+    renderAll();
+  }
+});
+
+function renderAll(){
+  renderList('physics','physicsAll');
+  renderList('chemistry','chemistryAll');
+  renderList('biology','biologyAll');
+  bindEvents();
+  updateProgress();
+}
+
+renderAll();
+});
+</script>
+</body>
+</html>
